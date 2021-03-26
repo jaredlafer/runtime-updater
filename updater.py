@@ -1,62 +1,58 @@
 
 from flask import Flask
-
 from types import CodeType
-
 from bytecode import Instr, Bytecode
 from flask import request
-
 import dis
-
 
 
 app = Flask(__name__)
 
-
-def wadd(x, y):
-
-    pow_n = 3
-    result = (x + y) ** pow_n
-    return abs(result)
-
 @app.route('/', methods=['GET'])
-def proxy():
-    x = int(request.args.get('x'))
-    y = int(request.args.get('y'))
-    return str(wadd(x,y))
+def foobar(*args):
+    return "True"
+
+# @app.route('/', methods=['GET', 'POST'])
+# def proxy():
+#     args = request.args
+#     args = args.to_dict(flat=True)
+#     return foobar(**args)
+
 
 @app.route('/update_endpoint', methods=["POST"])
 def update():
+    data = request.get_json()
 
-    #payload = request.data
-    params = request.get_json()
-    payload = params.get("payload").encode("utf-8")
-    func = params.get("func")
+    data['co_code'] =  data['co_code'].encode('latin1')
+    data['co_lnotab'] = data['co_lnotab'].encode('latin1')
 
-    #func = "wadd"
+    func = data['function']
 
-    #payload = unicode_string.encode('utf-8')
-    fn_code = globals()[func].__code__
+    for k,v in data.items():
+        if isinstance(v, list):
+            data[k] = tuple(v)
 
-    globals()[func].__code__ = CodeType(fn_code.co_argcount,
-                             fn_code.co_kwonlyargcount,
-                             fn_code.co_posonlyargcount,
-                             fn_code.co_nlocals,
-                             fn_code.co_stacksize,
-                             fn_code.co_flags,
-                             payload,
-                             fn_code.co_consts,
-                             fn_code.co_names,
-                             fn_code.co_varnames,
-                             fn_code.co_filename,
-                             fn_code.co_name,
-                             fn_code.co_firstlineno,
-                             fn_code.co_lnotab,
-                             fn_code.co_freevars,
-                             fn_code.co_cellvars,
+    globals()[func].__code__ = CodeType(data.get("co_argcount"),
+                             data.get("co_kwonlyargcount"),
+                             data.get("co_posonlyargcount"),
+                             data.get("co_nlocals"),
+                             data.get("co_stacksize"),
+                             data.get("co_flags"),
+                             data.get("co_code"),
+                             data.get("co_consts"),
+                             data.get("co_names"),
+                             data.get("co_varnames"),
+                             data.get("co_filename"),
+                             data.get("co_name"),
+                             data.get("co_firstlineno"),
+                             data.get("co_lnotab"),
+                             data.get("co_freevars"),
+                             data.get("co_cellvars"),
                              )
 
     return "True"
+
+
 
 
 
