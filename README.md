@@ -34,6 +34,7 @@ The tests here provide an examples of how the client might prepare functions to 
 ## Functionality
 The structure follows the standard flask factory pattern. As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
 ```python
+@update_bp.route('/', methods=['GET'])
 def foobar_endpoint():
     ...
 ```
@@ -42,18 +43,19 @@ This calls a function
 def foobar():
     ...
 ```
-in `updateable_api/updateable_functions.py` that can be updated. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
+in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
+@update_bp.route('/update_endpoint', methods=["POST"])
 def update()
     ...
 ```
-as long as the updated function returns objects that are json serializable. It is assumed that the user has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
+as long as the updated function returns objects that are json serializable. It is assumed that the developer has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
 
 ## Logging
 Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. Log environment variables are stored in `settings.py` The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo
 
 ## Limitations
-The code does not support updating flask routes or classes. For routes, I didn't have the time to untangle the flask code from the bytecode, so made a design choice to require that only functions that routes call could be updated. I didn't have the time to implement injection for classes.
+The code does not support updating flask routes or classes. For routes, I didn't have the time to untangle the flask code from the bytecode, so made a design choice to require that only functions that routes call could be updated. Likewise, I didn't have the time to implement injection for classes, though anticipate this being more complex.
 
 A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved renamed (see https://docs.python.org/3/library/logging.handlers.html)
 
