@@ -43,7 +43,7 @@ This calls a function
 def foobar():
     ...
 ```
-in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
+in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
 @update_bp.route('/update_endpoint', methods=["POST"])
 def update():
