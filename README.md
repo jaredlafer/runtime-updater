@@ -54,7 +54,7 @@ The code does not support updating flask routes or classes. For routes, I didn't
 A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved renamed (see https://docs.python.org/3/library/logging.handlers.html)
 
 ## TODO
-Fix all the limitations above.
-Implement a system for version control (e.g. github for bytecode injection)
-Write tests for logging
-Test on other operating systems
+Fix all the limitations above.  
+Implement a system for version control (e.g. github for bytecode injection).  
+Write tests for logging.  
+Test on other operating systems.  
