@@ -25,7 +25,7 @@ To run the server:
     
 By default the app will run on `http://127.0.0.1:5000`
 
-The app is created in `updateable_api/__init__.py`. The structure follows the standard flask factory pattern. 
+The app is created in `updateable_api/__init__.py`. The structure follows the standard flask [factory pattern](https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/). 
     
 ## Tests
 Unit tests are written in tests.py, and can be run:
