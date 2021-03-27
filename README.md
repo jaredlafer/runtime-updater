@@ -19,6 +19,8 @@ To run the server:
 
     $ python run.py
     
+By default the app will run on http://127.0.0.1:5000 
+    
 ## Tests
 Unit tests are written in tests.py, and can be run:
     
