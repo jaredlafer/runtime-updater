@@ -110,5 +110,28 @@ class TestUpdate(flask_unittest.AppTestCase):
             self.assertEqual("foobar", a)
             self.assertEqual(5, b)
 
+    def test_update_function_buggy(self, app):
+        """
+        Creates a buggy function
+        and injects it onto the running server
+        """
+
+        # function to inject
+        def foobar():
+            raise Exception
+
+        bytecode_dict = self.prepare_function(foobar, "foobar")
+
+        with app.test_client() as client:
+            response = client.post('http://127.0.0.1:5000/update_endpoint',
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
+            self.assertEqual(response.json['Success'], 'Updated')
+
+            response = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual(response.status, "500 INTERNAL SERVER ERROR")
+
+
+
     
 
