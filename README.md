@@ -1,6 +1,11 @@
 # runtime-updater
 
-This app is a proof of concept for an api running on a [flask](https://flask.palletsprojects.com/en/1.1.x/) server that is capable of updating its own functions runtime. It achieves this through [bytecode](https://en.wikipedia.org/wiki/Bytecode) injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a target function's CodeObject on the server. This app is simplified and not designed with a particular use case in mind, though if you had to design a server that would be deployed and never shut down, this generally models how bytecode injection could be used to update code on that server after deployment.
+This app is a proof of concept for an api running on a [flask](https://flask.palletsprojects.com/en/1.1.x/) server that is capable of updating its own functions runtime. It achieves this through [bytecode](https://en.wikipedia.org/wiki/Bytecode) injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a target function's CodeObject on the server. This app is a simple model, and not designed with a particular use case in mind, though here are some examples:
+1. You need a server that once deployed would never be shut down, yet whose code needs capable of being updated.
+2. You don't have the source code for a running application (e.g. only *.pyc files), and can only update at the level of bytecode.
+3. You're working with a module that is obfuscated and difficult to modify in an automated way.
+
+
 
 ## Installation
 Clone the repository
@@ -66,4 +71,5 @@ A WatchedHandler cannot be used for logging on Windows because on Windows open l
 Fix all the limitations above.  
 Implement a system for version control (e.g. github for bytecode injection).  
 Write tests for logging.  
+Write proper integration tests.  
 Test on other operating systems.  
