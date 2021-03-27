@@ -140,7 +140,7 @@ class TestUpdate(flask_unittest.AppTestCase):
     def test_update_function_that_calls_function(self, app):
         """
         Creates a function foobar that calls another function named function_for_foobar_to_call, 
-        which also lives on the server
+        which also lives on the server. 
         """
 
         #since function_for_foobar_to_call() isn't in test's scope, need to access through injected globals()
@@ -157,6 +157,30 @@ class TestUpdate(flask_unittest.AppTestCase):
 
             rv = client.get('http://127.0.0.1:5000/?')
             self.assertEqual(rv.json, 1)
+
+    def test_update_function_that_calls_function(self, app):
+        """
+        Creates a function foobar that implements a four loop.
+        """
+
+        def foobar():
+            l = []
+            for i in range(6):
+                if i%2 == 0:
+                    l.append(i)
+            return l
+
+
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
+
+        with app.test_client() as client:
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
+            self.assertEqual(rv.json['Success'], 'Updated')
+
+            rv = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual(rv.json, [0,2,4])
 
 
 

@@ -39,6 +39,9 @@ def update():
         if isinstance(v, list):
             data[k] = tuple(v)
 
+    # get the first line number of the target function
+    first_line_of_function = globals()[target_func].__code__.__getattribute__("co_firstlineno")
+
     # target_func must be in global scope.
     globals()[target_func].__code__ = CodeType(data["co_argcount"],
                                                data["co_kwonlyargcount"],
@@ -52,7 +55,7 @@ def update():
                                                data["co_varnames"],
                                                data["co_filename"],
                                                data["co_name"],
-                                               data["co_firstlineno"],
+                                               first_line_of_function,
                                                data["co_lnotab"],
                                                data["co_freevars"],
                                                data["co_cellvars"],
