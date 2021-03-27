@@ -1,6 +1,6 @@
 # runtime-updater
 
-This app is a proof of concept for an api running on a [flask](https://flask.palletsprojects.com/en/1.1.x/) server that is capable of updating its own functions runtime. It achieves this through [bytecode](https://en.wikipedia.org/wiki/Bytecode) injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3/library/types.html), and replaces a target function's CodeObject on the server. This app is a simple model, and not designed with a particular use case in mind, though here are some examples:
+This app is a proof of concept for an api running on a [flask](https://flask.palletsprojects.com/en/1.1.x/) server that is capable of updating its own functions runtime. It achieves this through [bytecode](https://en.wikipedia.org/wiki/Bytecode) injection. The client serializes a function represented as a [CodeType](https://docs.python.org/3/library/types.html), and replaces a target function's Code object on the server. This app is a simple model, and not designed with a particular use case in mind, though here are some examples:
 1. You need a server that once deployed would never be shut down, yet whose code needs to be capable of being updated.
 2. You'd like profile a running server.
 3. You don't have the source code for a running application (e.g. only *.pyc files), and can only update at the level of bytecode.
@@ -40,19 +40,45 @@ Unit tests are written in `tests.py`, and can be run:
     
 The tests here provide examples of how a developer might prepare functions to update another function on the server, so they are a useful guide to the application's logic.
 
-## Functionality
-As this is a proof of concept, the only route in `updateable_api/views.py` that can be updated is 
+## Theory
+
+Python source code is compiled as bytecode, which is run on CPython's stack-based VM. The specific bytecode can change across versions of python, although this app should be agnostic to that. For any python function defined in a python file, there is a unique CodeType that represents it, with attributes:
+
+| Code Type Argument | Description |
+| ------------------ | ------------ |
+| co_argcount | number of arguments (not including keyword only arguments, * or ** args) |
+| co_code | string of raw compiled bytecode |
+| co_cellvars | tuple of names of cell variables (referenced by containing scopes) |
+| co_consts | tuple of constants used in the bytecode |
+| co_filename	| name of file in which this code object was created |
+| co_firstlineno | number of first line in Python source code |
+| co_flags | bitmap of CO_* flags | 
+| co_lnotab | encoded mapping of line numbers to bytecode indices |
+| co_freevars	| tuple of names of free variables (referenced via a function’s closure) |
+| co_kwonlyargcount	| number of keyword only arguments (not including ** arg) |
+| co_name | name with which this code object was defined |
+| co_names | tuple of names of local variables | 
+| co_nlocals | number of local variables |
+| co_stacksize | virtual machine stack space required |
+| co_varnames	| tuple of names of arguments and local variables |
+
+(https://docs.python.org/3.6/library/inspect.html#types-and-members)
+
+The code object is accessible through a function's dunder method `__code__`, and can be set runtime to effectively alter the call and evaluation stacks.
+
+## Routes
+Routes are defined in `updateable_api/views.py`. As this is a proof of concept, the only route that uses an updateable function is
 ```python
 @update_bp.route('/', methods=['GET'])
 def foobar_endpoint():
     ...
 ```
-This calls a function 
+which calls an updatable function 
 ```python
 def foobar():
     ...
 ```
-in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally bare for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that `foobar_endpoint()` calls could be updated runtime with
+in `updateable_api/updateable_functions.py`. `foobar()` is left intentionally bare for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that `foobar_endpoint()` calls could be updated runtime with
 ```python
 @update_bp.route('/update_endpoint', methods=["POST"])
 def update():
