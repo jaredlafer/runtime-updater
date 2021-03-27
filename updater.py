@@ -1,16 +1,18 @@
 
-from flask import Flask
-from types import CodeType
-from bytecode import Instr, Bytecode
-from flask import request
-import dis
+# from flask import Flask
+# from types import CodeType
+# from bytecode import Instr, Bytecode
+# from flask import request
+# import dis
+# import logging
 
 
-app = Flask(__name__)
+# #app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def foobar(*args):
-    return "True"
+
+
+# def foobar(*args):
+#     return 200
 
 # @app.route('/', methods=['GET', 'POST'])
 # def proxy():
@@ -19,38 +21,43 @@ def foobar(*args):
 #     return foobar(**args)
 
 
-@app.route('/update_endpoint', methods=["POST"])
-def update():
-    data = request.get_json()
+# @app.route('/update_endpoint', methods=["POST"])
+# def update():
 
-    data['co_code'] =  data['co_code'].encode('latin1')
-    data['co_lnotab'] = data['co_lnotab'].encode('latin1')
+#     data = request.get_json()
 
-    func = data['function']
+#     app.logger.info(f"Update called with the following params: {data}")
 
-    for k,v in data.items():
-        if isinstance(v, list):
-            data[k] = tuple(v)
+#     data['co_code'] =  data['co_code'].encode('latin1')
+#     data['co_lnotab'] = data['co_lnotab'].encode('latin1')
 
-    globals()[func].__code__ = CodeType(data.get("co_argcount"),
-                             data.get("co_kwonlyargcount"),
-                             data.get("co_posonlyargcount"),
-                             data.get("co_nlocals"),
-                             data.get("co_stacksize"),
-                             data.get("co_flags"),
-                             data.get("co_code"),
-                             data.get("co_consts"),
-                             data.get("co_names"),
-                             data.get("co_varnames"),
-                             data.get("co_filename"),
-                             data.get("co_name"),
-                             data.get("co_firstlineno"),
-                             data.get("co_lnotab"),
-                             data.get("co_freevars"),
-                             data.get("co_cellvars"),
-                             )
+#     func = data['function']
 
-    return "True"
+#     #write current version to db
+
+#     for k,v in data.items():
+#         if isinstance(v, list):
+#             data[k] = tuple(v)
+
+#     globals()[func].__code__ = CodeType(data["co_argcount"],
+#                              data["co_kwonlyargcount"],
+#                              data["co_posonlyargcount"],
+#                              data["co_nlocals"],
+#                              data["co_stacksize"],
+#                              data["co_flags"],
+#                              data["co_code"],
+#                              data["co_consts"],
+#                              data["co_names"],
+#                              data["co_varnames"],
+#                              data["co_filename"],
+#                              data["co_name"],
+#                              data["co_firstlineno"],
+#                              data["co_lnotab"],
+#                              data["co_freevars"],
+#                              data["co_cellvars"],
+#                              )
+
+#     return 200
 
 
 
