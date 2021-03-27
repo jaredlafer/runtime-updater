@@ -2,7 +2,7 @@
 
 This app is a proof of concept for an api running on a [flask](https://flask.palletsprojects.com/en/1.1.x/) server that is capable of updating its own functions runtime. It achieves this through [bytecode](https://en.wikipedia.org/wiki/Bytecode) injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a target function's CodeObject on the server. This app is a simple model, and not designed with a particular use case in mind, though here are some examples:
 1. You need a server that once deployed would never be shut down, yet whose code needs to be capable of being updated.
-2. You'd like profile runnning code.
+2. You'd like profile a running server.
 3. You don't have the source code for a running application (e.g. only *.pyc files), and can only update at the level of bytecode.
 4. You're working with a module that is obfuscated and difficult to modify in an automated way.
 
