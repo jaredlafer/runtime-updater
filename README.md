@@ -57,7 +57,7 @@ Logging supports three modes "stream," "watched," and "rotate," with handlers fo
 ## Limitations
 The code does not support updating flask routes or classes. For routes, I didn't have the time to untangle the flask code from the bytecode, so made a design choice to require that only functions that routes call could be updated. Likewise, I didn't have the time to implement injection for classes, though anticipate this being more complex.
 
-A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved renamed (see https://docs.python.org/3/library/logging.handlers.html)
+A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved or renamed (see https://docs.python.org/3/library/logging.handlers.html)
 
 ## TODO
 Fix all the limitations above.  
