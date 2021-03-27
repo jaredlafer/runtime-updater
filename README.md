@@ -60,7 +60,11 @@ def update():
 ```
 as long as the updated function returns objects that are json serializable. It is assumed that the developer has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
 
-Basic versioning is supported by creating additional blueprints in `updateable_api/views.py`, e.g. update_bp_v1 = Blueprint('update_v1', __name__) -> update_bp_v2 = Blueprint('update_v2', __name__)
+Basic versioning is supported by creating additional blueprints in `updateable_api/views.py`, e.g. 
+
+```python
+update_bp_v2 = Blueprint('update_v2', __name__)
+```
 
 
 ## Logging
