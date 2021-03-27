@@ -2,6 +2,7 @@ import requests
 import dis
 import flask_unittest
 
+
 class TestUpdate(flask_unittest.AppTestCase):
 
     def create_app(self):
@@ -10,8 +11,15 @@ class TestUpdate(flask_unittest.AppTestCase):
         yield app
 
     def test_update_function(self, app):
-        
-        #*********** function to inject ***********
+        """
+        This is meant to emulate what would happen on the client side. It creates a function foobar, 
+        converts it to bytecode, and injects it into a function on the server which is also 
+        named 'foobar,' though it doesn't have to have the same name. This provides a specification
+        for serializing a function on the client side and calling the update_function endpoint 
+        on the server.
+        """
+
+        # *********** function to inject ***********
         def foobar(x, y):
             x = int(x)
             y = int(y)
@@ -19,10 +27,9 @@ class TestUpdate(flask_unittest.AppTestCase):
 
             result = (x - y) ** pow_n
             return abs(result)
-        #*********** end function ***********
+        # *********** end function ***********
 
-
-        #store the function bytecode and properties in a dict to be posted
+        # store the function bytecode and properties in a dict to be posted
         bytecode_dict = {}
 
         for attr in dir(foobar.__code__):
@@ -38,41 +45,9 @@ class TestUpdate(flask_unittest.AppTestCase):
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
-                    json=bytecode_dict,
-                    headers={'Content-Type': 'application/json'})
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
             self.assertEqual(response.json['Success'], 'Updated')
-
 
             response = client.get('http://127.0.0.1:5000/?x=3&y=1')
             self.assertEqual(8, response.json)
-
-
-
-
-# def foobar(x, y):
-#     x = int(x)
-#     y = int(y)
-#     pow_n = 3
-
-#     result = (x - y) ** pow_n
-#     return str(abs(result))
-
-
-# d = {}
-
-# for attr in dir(foobar.__code__):
-#     if attr.startswith('co_'):
-#         val = foobar.__code__.__getattribute__(attr)
-#         if isinstance(val, bytes):
-#             val = val.decode('latin1')
-#         if attr == 'co_filename':
-#             val = "updateable_functions.py"
-#         d[attr] = val
-
-# d['function'] = 'foobar'
-# requests.post(url='http://127.0.0.1:5000/update_endpoint',
-#                     json=d,
-#                     headers={'Content-Type': 'application/json'})
-
-# res = requests.get(url='http://127.0.0.1:5000/?x=3&y=1')
-# print(res.json())

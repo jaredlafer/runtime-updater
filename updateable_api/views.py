@@ -6,7 +6,6 @@ import dis
 import json
 
 
-
 update_bp = Blueprint('update', __name__)
 
 
@@ -26,32 +25,31 @@ def update():
 
     data = request.get_json()
 
-    data['co_code'] =  data['co_code'].encode('latin1')
+    data['co_code'] = data['co_code'].encode('latin1')
     data['co_lnotab'] = data['co_lnotab'].encode('latin1')
 
     func = data['function']
 
-
-    for k,v in data.items():
+    for k, v in data.items():
         if isinstance(v, list):
             data[k] = tuple(v)
 
     globals()[func].__code__ = CodeType(data["co_argcount"],
-                             data["co_kwonlyargcount"],
-                             data["co_posonlyargcount"],
-                             data["co_nlocals"],
-                             data["co_stacksize"],
-                             data["co_flags"],
-                             data["co_code"],
-                             data["co_consts"],
-                             data["co_names"],
-                             data["co_varnames"],
-                             data["co_filename"],
-                             data["co_name"],
-                             data["co_firstlineno"],
-                             data["co_lnotab"],
-                             data["co_freevars"],
-                             data["co_cellvars"],
-                             )
+                                        data["co_kwonlyargcount"],
+                                        data["co_posonlyargcount"],
+                                        data["co_nlocals"],
+                                        data["co_stacksize"],
+                                        data["co_flags"],
+                                        data["co_code"],
+                                        data["co_consts"],
+                                        data["co_names"],
+                                        data["co_varnames"],
+                                        data["co_filename"],
+                                        data["co_name"],
+                                        data["co_firstlineno"],
+                                        data["co_lnotab"],
+                                        data["co_freevars"],
+                                        data["co_cellvars"],
+                                        )
 
-    return make_response(jsonify({'Success':'Updated'}), 200)
+    return make_response(jsonify({'Success': 'Updated'}), 200)
