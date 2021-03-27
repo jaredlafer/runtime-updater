@@ -1,6 +1,6 @@
 # runtime-updater
 
-This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could be used to update code on that server.
+This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could be used to update code on that server after deployment.
 
 ## Installation
 Clone the repository
