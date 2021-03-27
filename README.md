@@ -6,6 +6,7 @@ This app is a proof of concept for an api running on a flask server that is capa
 Clone the repository
 
     $ git clone https://github.com/jaredlafer/runtime-updater.git
+    $ cd runtime-updater
 
 It is recommended you run this code in a [virtual environment](https://virtualenvwrapper.readthedocs.io/en/latest/index.html).
 
@@ -33,15 +34,18 @@ The tests here provide an examples of how the client might prepare functions to 
 ## Functionality
 The structure follows the standard flask factory pattern. As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
 ```python
-def foobar_endpoint()
+def foobar_endpoint():
+    ...
 ```
 This calls a function 
 ```python
-def foobar()
+def foobar():
+    ...
 ```
 in `updateable_api/updateable_functions.py` that can be updated. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
 def update()
+    ...
 ```
 as long as the updated function returns objects that are json serializable. It is assumed that the user has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
 
