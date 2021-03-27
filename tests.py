@@ -13,9 +13,9 @@ class TestUpdate(flask_unittest.AppTestCase):
     def test_update_function(self, app):
         """
         This is meant to emulate what would happen on the client side. It creates a function foobar, 
-        converts it to bytecode, and injects it into a function on the server which is also 
+        converts it to CodeObject, and injects that into a function on the server which is also 
         named 'foobar,' though it doesn't have to have the same name. This provides a specification
-        for serializing a function on the client side and calling the update_function endpoint 
+        for serializing a function on the client and calling the update_function endpoint 
         on the server.
         """
 
