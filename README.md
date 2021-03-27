@@ -52,13 +52,16 @@ This calls a function
 def foobar():
     ...
 ```
-in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that `foobar_endpoint()` calls could be updated runtime with
+in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally bare for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that `foobar_endpoint()` calls could be updated runtime with
 ```python
 @update_bp.route('/update_endpoint', methods=["POST"])
 def update():
     ...
 ```
 as long as the updated function returns objects that are json serializable. It is assumed that the developer has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
+
+Basic versioning is supported by creating additional blueprints in `updateable_api/views.py`, e.g. update_bp_v1 = Blueprint('update_v1', __name__) -> update_bp_v2 = Blueprint('update_v2', __name__)
+
 
 ## Logging
 Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. The logs are set up in `updateable_api_logs.py`. Log environment variables are stored in `settings.py`. Every request is logged. The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo.
