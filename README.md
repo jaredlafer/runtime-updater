@@ -43,7 +43,7 @@ in `updateable_api/updateable_functions.py` that can be updated. With foobar_end
 ```python
 def update()
 ```
-as long as the updated function returns objects that are json serializable. It is assumed that the user has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected the application will break.
+as long as the updated function returns objects that are json serializable. It is assumed that the user has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
 
 ## Logging
 Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. Log environment variables are stored in `settings.py` The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo
