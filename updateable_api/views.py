@@ -12,7 +12,7 @@ update_bp = Blueprint('update', __name__)
 @update_bp.route('/', methods=['GET'])
 def foobar_endpoint():
     """
-    Proxy for any function
+    Arbitrary endpoint
     """
     args = request.args
     args = args.to_dict(flat=True)
