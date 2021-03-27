@@ -46,7 +46,7 @@ def foobar():
 in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
 @update_bp.route('/update_endpoint', methods=["POST"])
-def update()
+def update():
     ...
 ```
 as long as the updated function returns objects that are json serializable. It is assumed that the developer has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
