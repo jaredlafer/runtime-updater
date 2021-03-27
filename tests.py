@@ -10,7 +10,26 @@ class TestUpdate(flask_unittest.AppTestCase):
         app = create_app()
         yield app
 
-    def test_update_function(self, app):
+    def prepare_function(self, func, target_func):
+
+        # store the function bytecode and properties in a dict to be posted
+        bytecode_dict = {}
+
+        for attr in dir(func.__code__):
+            if attr.startswith('co_'):
+                val = func.__code__.__getattribute__(attr)
+                if isinstance(val, bytes):
+                    val = val.decode('latin1')
+                if attr == 'co_filename':
+                    val = "updateable_functions.py"
+                bytecode_dict[attr] = val
+
+        bytecode_dict['function'] = target_func
+
+
+        return bytecode_dict
+
+    def test_update_function_math(self, app):
         """
         This is meant to emulate what would happen on the client side. It creates a function foobar, 
         converts it to CodeObject, and injects that into a function on the server which is also 
@@ -31,19 +50,7 @@ class TestUpdate(flask_unittest.AppTestCase):
             return abs(result)
         # *********** end function ***********
 
-        # store the function bytecode and properties in a dict to be posted
-        bytecode_dict = {}
-
-        for attr in dir(foobar.__code__):
-            if attr.startswith('co_'):
-                val = foobar.__code__.__getattribute__(attr)
-                if isinstance(val, bytes):
-                    val = val.decode('latin1')
-                if attr == 'co_filename':
-                    val = "updateable_functions.py"
-                bytecode_dict[attr] = val
-
-        bytecode_dict['function'] = 'foobar'
+        bytecode_dict = self.prepare_function(foobar, "foobar")
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
@@ -53,3 +60,32 @@ class TestUpdate(flask_unittest.AppTestCase):
 
             response = client.get('http://127.0.0.1:5000/?x=3&y=1')
             self.assertEqual(8, response.json)
+
+
+    def test_update_function_string(self, app):
+        """
+        This is meant to emulate what would happen on the client side. It creates a function foobar, 
+        converts it to CodeObject, and injects that into a function on the server which is also 
+        named 'foobar,' though it doesn't have to have the same name. This provides a specification
+        for serializing a function on the client and calling the update_function endpoint 
+        on the server.
+
+        :param app: Flask app
+        """
+
+        # *********** function to inject ***********
+        def foobar():
+            return "foobar"
+        # *********** end function ***********
+
+        bytecode_dict = self.prepare_function(foobar, "foobar")
+
+
+        with app.test_client() as client:
+            response = client.post('http://127.0.0.1:5000/update_endpoint',
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
+            self.assertEqual(response.json['Success'], 'Updated')
+
+            response = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual("foobar", response.json)
