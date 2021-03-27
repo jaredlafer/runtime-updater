@@ -7,6 +7,7 @@ Clone the repository
 
     $ git clone https://github.com/jaredlafer/runtime-updater.git
     $ cd runtime-updater
+    $ mkdir logs
 
 It is recommended you run this code in a [virtual environment](https://virtualenvwrapper.readthedocs.io/en/latest/index.html).
 
