@@ -75,7 +75,6 @@ class TestUpdate(flask_unittest.AppTestCase):
         Creates a function that returns a string and injects it onto the running server
         """
 
-        # function to inject
         def foobar():
             return "foobar"
 
@@ -97,7 +96,6 @@ class TestUpdate(flask_unittest.AppTestCase):
         and injects it onto the running server
         """
 
-        # function to inject
         def foobar():
             return "foobar", 5
 
@@ -120,7 +118,6 @@ class TestUpdate(flask_unittest.AppTestCase):
         that a 500 status is returned
         """
 
-        # function to inject
         def foobar():
             raise Exception
 
