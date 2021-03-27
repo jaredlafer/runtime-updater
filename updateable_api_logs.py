@@ -16,6 +16,9 @@ class LogSetup(object):
 
         log_type = app.config["LOG_TYPE"]
         logging_level = app.config["LOG_LEVEL"]
+
+        assert log_type in ['stream', 'watched', 'rotate']
+
         if log_type != "stream":
             try:
                 log_directory = app.config["LOG_DIR"]

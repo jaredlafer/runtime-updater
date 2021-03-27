@@ -15,7 +15,7 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        #Logging after every request
+        # Logging after every request
         logger = logging.getLogger("app")
         logger.info(
             "%s [%s] %s %s %s %s %s %s %s",
@@ -33,5 +33,3 @@ def create_app():
         return response
 
     return app
-
-

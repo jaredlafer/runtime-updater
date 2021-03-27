@@ -4,8 +4,7 @@ env = Env()
 env.read_env()
 
 # Logging Setup
-# Can be set to 'stream' 'watched' or 'rotate'
-LOG_TYPE = env.str("LOG_TYPE", "rotate")
+LOG_TYPE = env.str("LOG_TYPE", "rotate") # can be set to 'stream' 'watched' or 'rotate'
 LOG_LEVEL = env.str("LOG_LEVEL", "INFO")
 
 # File Logging Setup
