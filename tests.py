@@ -134,6 +134,28 @@ class TestUpdate(flask_unittest.AppTestCase):
             response = client.get('http://127.0.0.1:5000/?')
             self.assertEqual(response.status, "500 INTERNAL SERVER ERROR")
 
+    def test_update_function_that_calls_function(self, app):
+        """
+        Creates a function foobar that calls another function named function_for_foobar_to_call, 
+        which also lives on the server
+        """
+
+        #since function_for_foobar_to_call() isn't in scope here, need to access through injected globals()
+        def foobar():
+            return globals()['function_for_foobar_to_call']()
+
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
+
+        with app.test_client() as client:
+            response = client.post('http://127.0.0.1:5000/update_endpoint',
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
+            self.assertEqual(response.json['Success'], 'Updated')
+
+            response = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual(response.json, 1)
+
+
 
 
     
