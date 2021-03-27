@@ -1,26 +1,28 @@
-from flask import Blueprint
-from flask import request
+from flask import Blueprint, request, jsonify, make_response
+from flask import current_app
 from types import CodeType
 from updateable_api.updateable_functions import foobar
 import dis
+import json
 
 
 
 update_bp = Blueprint('update', __name__)
 
 
-
 @update_bp.route('/', methods=['GET'])
-def foobar_proxy():
+def foobar_endpoint():
+    """
+    Proxy for any function
+    """
     args = request.args
     args = args.to_dict(flat=True)
     response = foobar(**args)
-    return str(response)
+    return make_response(jsonify(response), 200)
 
 
 @update_bp.route('/update_endpoint', methods=["POST"])
 def update():
-
 
     data = request.get_json()
 
@@ -30,11 +32,9 @@ def update():
     func = data['function']
 
 
-
     for k,v in data.items():
         if isinstance(v, list):
             data[k] = tuple(v)
-
 
     globals()[func].__code__ = CodeType(data["co_argcount"],
                              data["co_kwonlyargcount"],
@@ -53,4 +53,5 @@ def update():
                              data["co_freevars"],
                              data["co_cellvars"],
                              )
-    return 200
+
+    return make_response(jsonify({'Success':'Updated'}), 200)

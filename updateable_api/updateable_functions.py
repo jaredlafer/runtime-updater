@@ -1,2 +1,5 @@
 def foobar(*args):
-    return 200
+    """
+    This could be any function we want to change
+    """
+    return None
