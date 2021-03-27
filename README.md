@@ -35,7 +35,7 @@ Unit tests are written in tests.py, and can be run:
 The tests here provide examples of how the client might prepare functions to update another function on the server.
 
 ## Functionality
-As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
+As this is a proof of concept, the only route in `updateable_api/views.py` that can be updated is 
 ```python
 @update_bp.route('/', methods=['GET'])
 def foobar_endpoint():
