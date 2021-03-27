@@ -17,6 +17,8 @@ class TestUpdate(flask_unittest.AppTestCase):
         named 'foobar,' though it doesn't have to have the same name. This provides a specification
         for serializing a function on the client and calling the update_function endpoint 
         on the server.
+
+        :param app: Flask app
         """
 
         # *********** function to inject ***********
