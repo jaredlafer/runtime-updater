@@ -34,6 +34,7 @@ class TestUpdate(flask_unittest.AppTestCase):
                 val = func.__code__.__getattribute__(attr)
                 #convert bytes to string
                 if isinstance(val, bytes):
+                    #bytes don't like some other standard encodings
                     val = val.decode('latin1')
                 #specify filename
                 if attr == 'co_filename':
@@ -90,7 +91,7 @@ class TestUpdate(flask_unittest.AppTestCase):
             self.assertEqual("foobar", response.json)
 
 
-    def test_update_function_two_returns(self, app):
+    def test_update_function_two_return_types(self, app):
         """
         Creates a function that returns two objects of different types
         and injects it onto the running server
