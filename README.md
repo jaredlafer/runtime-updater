@@ -38,7 +38,7 @@ Unit tests are written in tests.py, and can be run:
     
     $ python -m unittest tests
     
-The tests here provide examples of how a developer might prepare functions to update another function on the server.
+The tests here provide examples of how a developer might prepare functions to update another function on the server, so they are a useful guide to the application's logic.
 
 ## Functionality
 As this is a proof of concept, the only route in `updateable_api/views.py` that can be updated is 
