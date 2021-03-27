@@ -1,6 +1,5 @@
 import requests
 import dis
-
 import flask_unittest
 
 class TestUpdate(flask_unittest.AppTestCase):
@@ -35,43 +34,16 @@ class TestUpdate(flask_unittest.AppTestCase):
                     val = "updateable_functions.py"
                 bytecode_dict[attr] = val
 
+        bytecode_dict['function'] = 'foobar'
+
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
                     json=bytecode_dict,
                     headers={'Content-Type': 'application/json'})
-
-            print(response)
-
-            res = client.get('http://127.0.0.1:5000/?x=3&y=1')
-            print(res)
+            self.assertEqual(response.json['Success'], 'Updated')
 
 
+            response = client.get('http://127.0.0.1:5000/?x=3&y=1')
+            self.assertEqual(8, response.json)
 
 
-# def foobar(x, y):
-#     x = int(x)
-#     y = int(y)
-#     pow_n = 3
-
-#     result = (x - y) ** pow_n
-#     return str(abs(result))
-
-
-# d = {}
-
-# for attr in dir(foobar.__code__):
-#     if attr.startswith('co_'):
-#         val = foobar.__code__.__getattribute__(attr)
-#         if isinstance(val, bytes):
-#             val = val.decode('latin1')
-#         if attr == 'co_filename':
-#             val = "updateable_functions.py"
-#         d[attr] = val
-
-# d['function'] = 'foobar'
-# requests.post(url='http://127.0.0.1:5000/update_endpoint',
-#                     json=d,
-#                     headers={'Content-Type': 'application/json'})
-
-# res = requests.get(url='http://127.0.0.1:5000/?x=3&y=1')
-# print(res.text)
