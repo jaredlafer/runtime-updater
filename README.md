@@ -1,11 +1,13 @@
 # runtime-updater
 
-This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could achieve live versioning functionality.
+This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could achieve live version control functionality.
 
 ## Installation
 Clone the repository
 
     $ git clone https://github.com/jaredlafer/runtime-updater.git
+
+It is recommended you run this code in a [virtual environment](https://virtualenvwrapper.readthedocs.io/en/latest/index.html).
 
 Install dependencies using [pip](https://pip.pypa.io/en/stable/quickstart/):
 
@@ -26,10 +28,10 @@ Unit tests are written in tests.py, and can be run:
     
     $ python -m unittest tests
     
-The test defined here provides an example of how the client might prepare a function to update another function on the server.
+The tests here provide an examples of how the client might prepare functions to update another function on the server.
 
-## Structure
-The structure follows the standard flask factory pattern. As this is a demonstration, the only route in `updateable_api/views` that can be updated is 
+## Functionality
+The structure follows the standard flask factory pattern. As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
 ```python
 def foobar_endpoint()
 ```
@@ -37,10 +39,11 @@ This calls a function
 ```python
 def foobar()
 ```
-in `updateable_api/updateable_functions.py` that can be updated. With foobar_endpoint fixed, any function that foobar_endpoint calls could be updated runtime with
+in `updateable_api/updateable_functions.py` that can be updated. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
 def update()
 ```
+as long as the updated function returns objects that are json serializable. It is assumed that the user has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected the application will break.
 
 ## Logging
 Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. Log environment variables are stored in `settings.py` The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo
