@@ -1,6 +1,6 @@
 # runtime-updater
 
-This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could be used to update code on that server.
+This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this generally models how bytecode injection could be used to update code on that server after deployment.
 
 ## Installation
 Clone the repository
@@ -43,21 +43,21 @@ This calls a function
 def foobar():
     ...
 ```
-in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With foobar_endpoint fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
+in `updateable_api/updateable_functions.py` that can be updated. This function is intentionally empty for demonstration purposes. With `foobar_endpoint()` fixed, any function (e.g. `foobar()`) that foobar_endpoint calls could be updated runtime with
 ```python
 @update_bp.route('/update_endpoint', methods=["POST"])
-def update()
+def update():
     ...
 ```
 as long as the updated function returns objects that are json serializable. It is assumed that the developer has thoroughly tested the function contained in the `update()` payload and can ensure its compatibility with the application. If a buggy or incompatible function is injected a 500 status will be returned when the endpoint is called.
 
 ## Logging
-Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. Log environment variables are stored in `settings.py` The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo
+Logging supports three modes "stream," "watched," and "rotate," with handlers for both a default and an access log. The logs are set up in `updateable_api_logs.py`. Log environment variables are stored in `settings.py`. The logging is compatible with the flask factory pattern. Logging code was adapted from: https://github.com/tenable/flask-logging-demo.
 
 ## Limitations
 The code does not support updating flask routes or classes. For routes, I didn't have the time to untangle the flask code from the bytecode, so made a design choice to require that only functions that routes call could be updated. Likewise, I didn't have the time to implement injection for classes, though anticipate this being more complex.
 
-A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved renamed (see https://docs.python.org/3/library/logging.handlers.html)
+A WatchedHandler cannot be used for logging on Windows because on Windows open log files cannot be moved or renamed (see https://docs.python.org/3/library/logging.handlers.html)
 
 ## TODO
 Fix all the limitations above.  
