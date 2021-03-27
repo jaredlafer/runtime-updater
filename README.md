@@ -24,7 +24,7 @@ To run the server:
     
 By default the app will run on `http://127.0.0.1:5000`
 
-The app is created in `updateable_api/__init__.py`
+The app is created in `updateable_api/__init__.py`. The structure follows the standard flask factory pattern. 
     
 ## Tests
 Unit tests are written in tests.py, and can be run:
@@ -34,7 +34,7 @@ Unit tests are written in tests.py, and can be run:
 The tests here provide an examples of how the client might prepare functions to update another function on the server.
 
 ## Functionality
-The structure follows the standard flask factory pattern. As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
+As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
 ```python
 @update_bp.route('/', methods=['GET'])
 def foobar_endpoint():
