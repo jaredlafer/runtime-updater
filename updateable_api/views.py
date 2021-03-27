@@ -16,8 +16,8 @@ def foobar_endpoint():
     """
     args = request.args
     args = args.to_dict(flat=True)
-    response = foobar(**args)
-    return make_response(jsonify(response), 200)
+    rv = foobar(**args)
+    return make_response(jsonify(rv), 200)
 
 
 @update_bp_v1.route('/update_endpoint', methods=["POST"])

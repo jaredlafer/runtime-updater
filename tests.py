@@ -14,6 +14,8 @@ class TestUpdate(flask_unittest.AppTestCase):
     def create_app(self):
         from updateable_api import create_app
         app = create_app()
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = True
         yield app
 
     def prepare_function(self, func, target_funcname, target_filename):
@@ -62,13 +64,13 @@ class TestUpdate(flask_unittest.AppTestCase):
         bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
-            response = client.post('http://127.0.0.1:5000/update_endpoint',
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
                                    json=bytecode_dict,
                                    headers={'Content-Type': 'application/json'})
-            self.assertEqual(response.json['Success'], 'Updated')
+            self.assertEqual(rv.json['Success'], 'Updated')
 
-            response = client.get('http://127.0.0.1:5000/?x=3&y=1')
-            self.assertEqual(8, response.json)
+            rv = client.get('http://127.0.0.1:5000/?x=3&y=1')
+            self.assertEqual(8, rv.json)
 
     def test_update_function_string(self, app):
         """
@@ -81,13 +83,13 @@ class TestUpdate(flask_unittest.AppTestCase):
         bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
-            response = client.post('http://127.0.0.1:5000/update_endpoint',
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
                                    json=bytecode_dict,
                                    headers={'Content-Type': 'application/json'})
-            self.assertEqual(response.json['Success'], 'Updated')
+            self.assertEqual(rv.json['Success'], 'Updated')
 
-            response = client.get('http://127.0.0.1:5000/?')
-            self.assertEqual("foobar", response.json)
+            rv = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual("foobar", rv.json)
 
 
     def test_update_function_two_return_types(self, app):
@@ -102,35 +104,38 @@ class TestUpdate(flask_unittest.AppTestCase):
         bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
-            response = client.post('http://127.0.0.1:5000/update_endpoint',
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
                                    json=bytecode_dict,
                                    headers={'Content-Type': 'application/json'})
-            self.assertEqual(response.json['Success'], 'Updated')
+            self.assertEqual(rv.json['Success'], 'Updated')
 
-            response = client.get('http://127.0.0.1:5000/?')
-            a,b = response.json
+            rv = client.get('http://127.0.0.1:5000/?')
+            a,b = rv.json
             self.assertEqual("foobar", a)
             self.assertEqual(5, b)
 
     def test_update_function_buggy(self, app):
         """
         Creates a buggy function and injects it onto the running server. Tests
-        that a 500 status is returned
+        that an exception is raised. Outside of test config, Flask throws a 500 status
+        from unhandled exceptions.
         """
 
         def foobar():
-            raise Exception
+            raise Exception("This is broken")
 
         bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
-            response = client.post('http://127.0.0.1:5000/update_endpoint',
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
                                    json=bytecode_dict,
                                    headers={'Content-Type': 'application/json'})
-            self.assertEqual(response.json['Success'], 'Updated')
+            self.assertEqual(rv.json['Success'], 'Updated')
 
-            response = client.get('http://127.0.0.1:5000/?')
-            self.assertEqual(response.status, "500 INTERNAL SERVER ERROR")
+            with self.assertRaises(Exception) as context:
+                rv = client.get('http://127.0.0.1:5000/?')
+
+            self.assertEqual("This is broken", str(context.exception))
 
     def test_update_function_that_calls_function(self, app):
         """
@@ -138,20 +143,20 @@ class TestUpdate(flask_unittest.AppTestCase):
         which also lives on the server
         """
 
-        #since function_for_foobar_to_call() isn't in scope here, need to access through injected globals()
+        #since function_for_foobar_to_call() isn't in test's scope, need to access through injected globals()
         def foobar():
             return globals()['function_for_foobar_to_call']()
 
         bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
-            response = client.post('http://127.0.0.1:5000/update_endpoint',
+            rv = client.post('http://127.0.0.1:5000/update_endpoint',
                                    json=bytecode_dict,
                                    headers={'Content-Type': 'application/json'})
-            self.assertEqual(response.json['Success'], 'Updated')
+            self.assertEqual(rv.json['Success'], 'Updated')
 
-            response = client.get('http://127.0.0.1:5000/?')
-            self.assertEqual(response.json, 1)
+            rv = client.get('http://127.0.0.1:5000/?')
+            self.assertEqual(rv.json, 1)
 
 
 
