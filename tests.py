@@ -44,8 +44,6 @@ class TestUpdate(flask_unittest.AppTestCase):
     def test_update_function_math(self, app):
         """
         Creates a function that does a mathematical computation and injects it onto the running server
-
-        :param app: Flask app
         """
 
         # function to inject
@@ -71,8 +69,6 @@ class TestUpdate(flask_unittest.AppTestCase):
     def test_update_function_string(self, app):
         """
         Creates a function that returns a string and injects it onto the running server
-
-        :param app: Flask app
         """
 
         # function to inject
@@ -89,3 +85,30 @@ class TestUpdate(flask_unittest.AppTestCase):
 
             response = client.get('http://127.0.0.1:5000/?')
             self.assertEqual("foobar", response.json)
+
+
+    def test_update_function_two_returns(self, app):
+        """
+        Creates a function that returns two objects of different types
+        and injects it onto the running server
+        """
+
+        # function to inject
+        def foobar():
+            return "foobar", 5
+
+        bytecode_dict = self.prepare_function(foobar, "foobar")
+
+        with app.test_client() as client:
+            response = client.post('http://127.0.0.1:5000/update_endpoint',
+                                   json=bytecode_dict,
+                                   headers={'Content-Type': 'application/json'})
+            self.assertEqual(response.json['Success'], 'Updated')
+
+            response = client.get('http://127.0.0.1:5000/?')
+            a,b = response.json
+            self.assertEqual("foobar", a)
+            self.assertEqual(5, b)
+
+    
+
