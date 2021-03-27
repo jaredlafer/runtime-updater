@@ -33,16 +33,9 @@ By default the app will run on `http://127.0.0.1:5000`
 
 The app is created in `updateable_api/__init__.py`. The structure follows the standard [flask factory pattern](https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/). 
     
-## Tests
-Unit tests are written in `tests.py`, and can be run:
-    
-    $ python -m unittest tests
-    
-The tests here provide examples of how a developer might prepare functions to update another function on the server, so they are a useful guide to the application's logic.
-
 ## Theory
 
-Python source code is compiled as bytecode, which is run on CPython's stack-based VM. The specific bytecode can change across versions of python, although this app should be agnostic to that. For any python function defined in a python file, there is a unique CodeType that represents it, with attributes:
+Python source code is compiled as bytecode, which is run on CPython's stack-based VM. For any python function defined in a python file, there is a unique CodeType that represents it, with attributes:
 
 | Code Type Argument | Description |
 | ------------------ | ------------ |
@@ -64,7 +57,15 @@ Python source code is compiled as bytecode, which is run on CPython's stack-base
 
 (https://docs.python.org/3.6/library/inspect.html#types-and-members)
 
-The code object is accessible through a function's dunder method `__code__`, and can be set runtime to effectively alter the call and evaluation stacks.
+The Code object is accessible through a function's dunder method `__code__`, and can be set runtime to alter the frame of a function's call stack. Note that bytecode syntax can change across versions of python, although this app should be agnostic to that. 
+
+## Tests
+Unit tests are written in `tests.py`, and can be run:
+    
+    $ python -m unittest tests
+    
+The tests here provide examples of how a developer might prepare functions to update another function on the server, so they are a useful guide to the application's logic. But they were designed to assess whether common operations on the call, evaluation, and block stacks can be successfully updated.
+
 
 ## Routes
 Routes are defined in `updateable_api/views.py`. As this is a proof of concept, the only route that uses an updateable function is
