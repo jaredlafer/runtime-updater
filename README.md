@@ -7,6 +7,8 @@ Clone the repository
 
     $ git clone https://github.com/jaredlafer/runtime-updater.git
 
+It is recommended you run this code in a [virtual environment](https://virtualenvwrapper.readthedocs.io/en/latest/index.html).
+
 Install dependencies using [pip](https://pip.pypa.io/en/stable/quickstart/):
 
     $ pip install -r requirements.txt
@@ -26,10 +28,10 @@ Unit tests are written in tests.py, and can be run:
     
     $ python -m unittest tests
     
-The test defined here provides an example of how the client might prepare a function to update another function on the server.
+The tests here provide an examples of how the client might prepare functions to update another function on the server.
 
 ## Structure
-The structure follows the standard flask factory pattern. As this is a demonstration, the only route in `updateable_api/views` that can be updated is 
+The structure follows the standard flask factory pattern. As this is a proof of concept, the only route in `updateable_api/views` that can be updated is 
 ```python
 def foobar_endpoint()
 ```
