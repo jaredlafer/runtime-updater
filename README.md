@@ -71,5 +71,5 @@ A WatchedHandler cannot be used for logging on Windows because on Windows open l
 Fix all the limitations above.  
 Implement a system for version control (e.g. github for bytecode injection).  
 Write tests for logging.  
-Write proper integration tests.
+Write proper integration tests.  
 Test on other operating systems.  
