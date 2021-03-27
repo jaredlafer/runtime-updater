@@ -3,6 +3,10 @@
 This app is a proof of concept for an api running on a flask server that is capable of updating its own functions runtime. It achieves this through bytecode injection. The client serializes a function represented as a [CodeObject](https://docs.python.org/3.8/c-api/code.html), and replaces a specified function's CodeObject on the server. This code is simplified and not designed with a particular use case in mind, though if you had to design a server that could never be shutdown, this shows how bytecode injection could achieve live versioning functionality.
 
 ## Installation
+Clone the repository
+
+    $ git clone https://github.com/jaredlafer/runtime-updater.git
+
 Install dependencies using [pip](https://pip.pypa.io/en/stable/quickstart/):
 
     $ pip install -r requirements.txt
