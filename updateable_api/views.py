@@ -25,15 +25,18 @@ def update():
 
     data = request.get_json()
 
+    #encode bytes
     data['co_code'] = data['co_code'].encode('latin1')
     data['co_lnotab'] = data['co_lnotab'].encode('latin1')
 
     func = data['function']
 
+    #json serializes tuples to lists, so this inverses that operation
     for k, v in data.items():
         if isinstance(v, list):
             data[k] = tuple(v)
 
+    #func must be in global scope. 
     globals()[func].__code__ = CodeType(data["co_argcount"],
                                         data["co_kwonlyargcount"],
                                         data["co_posonlyargcount"],

@@ -16,13 +16,14 @@ class TestUpdate(flask_unittest.AppTestCase):
         app = create_app()
         yield app
 
-    def prepare_function(self, func, target_func):
+    def prepare_function(self, func, target_funcname, target_filename):
         """
         Prepares a dict containing the attributes of func required for generating a CodeObject 
-        and injecting that CodeObject into target_func
+        and injecting that CodeObject into the target function in the target file
 
         :param func: function object
-        :param target_func: name of the target function
+        :param target_funcname: name of the target function
+        :param target_filename: name of the target file
         :returns: dict ready to be serialized
         """
 
@@ -31,13 +32,15 @@ class TestUpdate(flask_unittest.AppTestCase):
         for attr in dir(func.__code__):
             if attr.startswith('co_'):
                 val = func.__code__.__getattribute__(attr)
+                #convert bytes to string
                 if isinstance(val, bytes):
                     val = val.decode('latin1')
+                #specify filename
                 if attr == 'co_filename':
-                    val = "updateable_functions.py"
+                    val = target_filename
                 bytecode_dict[attr] = val
 
-        bytecode_dict['function'] = target_func
+        bytecode_dict['function'] = target_funcname
 
         return bytecode_dict
 
@@ -55,7 +58,7 @@ class TestUpdate(flask_unittest.AppTestCase):
             result = (x - y) ** pow_n
             return abs(result)
 
-        bytecode_dict = self.prepare_function(foobar, "foobar")
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
@@ -75,7 +78,7 @@ class TestUpdate(flask_unittest.AppTestCase):
         def foobar():
             return "foobar"
 
-        bytecode_dict = self.prepare_function(foobar, "foobar")
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
@@ -97,7 +100,7 @@ class TestUpdate(flask_unittest.AppTestCase):
         def foobar():
             return "foobar", 5
 
-        bytecode_dict = self.prepare_function(foobar, "foobar")
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
@@ -112,15 +115,15 @@ class TestUpdate(flask_unittest.AppTestCase):
 
     def test_update_function_buggy(self, app):
         """
-        Creates a buggy function
-        and injects it onto the running server
+        Creates a buggy function and injects it onto the running server. Tests
+        that a 500 status is returned
         """
 
         # function to inject
         def foobar():
             raise Exception
 
-        bytecode_dict = self.prepare_function(foobar, "foobar")
+        bytecode_dict = self.prepare_function(foobar, "foobar", "updateable_functions.py")
 
         with app.test_client() as client:
             response = client.post('http://127.0.0.1:5000/update_endpoint',
