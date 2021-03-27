@@ -9,8 +9,8 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(settings)
 
-    from updateable_api.views import update_bp
-    app.register_blueprint(update_bp)
+    from updateable_api.views import update_bp_v1
+    app.register_blueprint(update_bp_v1)
     logs.init_app(app)
 
     @app.after_request

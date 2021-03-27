@@ -5,11 +5,11 @@ from updateable_api.updateable_functions import foobar
 import dis
 import json
 
+#version updateable_api by declaring multiple blueprint versions here
+update_bp_v1 = Blueprint('update_v1', __name__)
 
-update_bp = Blueprint('update', __name__)
 
-
-@update_bp.route('/', methods=['GET'])
+@update_bp_v1.route('/', methods=['GET'])
 def foobar_endpoint():
     """
     Arbitrary endpoint
@@ -20,7 +20,7 @@ def foobar_endpoint():
     return make_response(jsonify(response), 200)
 
 
-@update_bp.route('/update_endpoint', methods=["POST"])
+@update_bp_v1.route('/update_endpoint', methods=["POST"])
 def update():
 
     data = request.get_json()
